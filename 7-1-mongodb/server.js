@@ -202,3 +202,68 @@
 
 
 // delete document
+
+// TODO-1: import mongoose
+import mongoose from "mongoose";
+
+// TODO-1: establish connection 
+// Replace <password> with: j3b3FR3DwIFCH9Sx
+const uri = "mongodb+srv://AbuDAhim:j3b3FR3DwIFCH9Sx@cluster0.h9xcq34.mongodb.net/labDB";
+
+mongoose.connect(uri)
+  .then(() => console.log("✅ Connected to MongoDB via Mongoose"))
+  .catch(err => console.error("❌ Connection error:", err));
+
+// TODO-2: define schema
+const studentSchema = new mongoose.Schema({
+    name: String,
+    age: Number,
+    major: String
+});
+
+const Student = mongoose.model("Student", studentSchema);
+
+// TODO-3: create document
+async function createStudents() {
+    await Student.insertMany([
+       { name: "Ali", age: 21, major: "CS" },
+       { name: "Sara", age: 23, major: "SE" }
+    ]);
+    console.log("✅ Inserted Ali and Sara");
+}
+
+// TODO-4: read document
+async function readStudents() {
+    const all = await Student.find();
+    console.log("📋 Current Students:", all);
+}
+
+// TODO-5: update document
+async function updateStudent() {
+    await Student.updateOne({ name: "Ali" }, { age: 22 });
+    console.log("✅ Updated Ali's age to 22");
+}
+
+// TODO-6: delete document
+async function deleteStudent() {
+    await Student.deleteOne({ name: "Sara" });
+    console.log("✅ Deleted Sara");
+}
+
+// --- Execution sequence ---
+// We call these in order to verify the lab requirements
+async function runLab() {
+    await createStudents();
+    await readStudents();
+    await updateStudent();
+    await deleteStudent();
+    
+    // Final check
+    const finalCheck = await Student.find();
+    console.log("🏁 Final Check (Should only be Ali):", finalCheck);
+    
+    // Close connection when done
+    mongoose.connection.close();
+}
+
+runLab();
